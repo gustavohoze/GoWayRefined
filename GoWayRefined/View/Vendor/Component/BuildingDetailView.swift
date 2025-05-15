@@ -5,6 +5,7 @@ struct BuildingDetailView: View {
     @ObservedObject var viewModel: BuildingDetailViewModel
     @State private var showingMapModal = false
     @State private var searchText = "" // Local state for search text
+    @EnvironmentObject var navigationVM: NavigationViewModel
     
     init(building: Building) {
         viewModel = BuildingDetailViewModel(building: building)
@@ -73,7 +74,10 @@ struct BuildingDetailView: View {
                     // Display vendors
                     if !viewModel.filteredVendors.isEmpty {
                         ForEach(viewModel.filteredVendors, id: \.name) { vendor in
-                            NavigationLink(destination: VendorDetailView(vendor: vendor)) {
+                            Button {
+                                // Navigate to vendor detail using our NavigationViewModel
+                                navigationVM.navigate(to: .vendorDetail(vendor: vendor, isRecommended: nil))
+                            } label: {
                                 VendorCard(
                                     vendorName: vendor.name,
                                     vendorType: vendor.type.description(),

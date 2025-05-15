@@ -38,11 +38,11 @@ let arOnboardingPages: [OnboardingContent] = [
     )
 ]
 
-// MARK: - AR Onboarding View Controller
 struct AROnboardingView: View {
-    @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var navigationVM: NavigationViewModel
     @State private var currentPageIndex = 0
     var vendor: Vendor
+    
     @State private var players: [AVPlayer] = arOnboardingPages.map { content in
         // Create a player for each page, using a placeholder URL if the video doesn't exist
         let videoURL = Bundle.main.url(forResource: content.videoName, withExtension: "mp4") ?? URL(string: "about:blank")!
@@ -53,6 +53,7 @@ struct AROnboardingView: View {
         return currentPageIndex == arOnboardingPages.count - 1
     }
     
+    
     var body: some View {
         VStack(spacing: 0) {
             // Header with Back and Skip buttons
@@ -61,7 +62,8 @@ struct AROnboardingView: View {
                     if currentPageIndex > 0 {
                         currentPageIndex -= 1
                     } else {
-                        presentationMode.wrappedValue.dismiss()
+                        // Go back to previous screen
+                        navigationVM.goBack()
                     }
                 }) {
                     HStack(spacing: 4) {
@@ -76,10 +78,10 @@ struct AROnboardingView: View {
                 Spacer()
                 
                 if !isLastPage {
-                    NavigationLink(destination: {
-                        // Skip to last page
-                        ARNavigationView(vendor: vendor).navigationBarBackButtonHidden()
-                    }) {
+                    Button {
+                        // Replace current onboarding view with AR Navigation
+                        navigationVM.replaceCurrentView(with: .arNavigation(vendor: vendor))
+                    } label: {
                         Text("SKIP")
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(.gray)
@@ -149,9 +151,20 @@ struct AROnboardingView: View {
                 
                 // Action button
                 if isLastPage {
-                GetStartedButton(vendor: vendor).padding(.bottom, 40)
-                }
-                else {
+                    // Update GetStartedButton to use navigationVM or replace with a Button
+                    Button {
+                        // Navigate to AR Navigation directly
+                        navigationVM.navigate(to: .arNavigation(vendor: vendor))
+                    } label: {
+                        Text("Get Started")
+                            .font(.system(size: 18, weight: .medium))
+                            .foregroundColor(.white)
+                            .frame(width: 200, height: 50)
+                            .background(Color.green)
+                            .cornerRadius(25)
+                    }
+                    .padding(.bottom, 40)
+                } else {
                     Button(action: {
                         // Go to next page
                         currentPageIndex += 1
@@ -162,9 +175,9 @@ struct AROnboardingView: View {
                             .frame(width: 200, height: 50)
                             .background(Color.green)
                             .cornerRadius(25)
-                    } .padding(.bottom, 40)
+                    }
+                    .padding(.bottom, 40)
                 }
-               
             }
             .padding(.horizontal, 20)
         }
@@ -207,6 +220,8 @@ struct AROnboardingView: View {
         }
     }
 }
+
+
 
 
 // MARK: - Preview

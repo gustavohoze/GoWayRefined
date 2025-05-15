@@ -4,6 +4,7 @@ import SwiftUI
 struct HomeRecommendation: View {
     // Use @State to ensure the random buildings are only generated once
     @State private var randomBuildings: [Building] = []
+    var navigationVM: NavigationViewModel
     
     // Initialize the random buildings in onAppear instead of during initialization
     func initializeRandomBuildings() {
@@ -44,7 +45,10 @@ struct HomeRecommendation: View {
                 HStack(spacing: 16) {
                     ForEach(randomBuildings) { building in
                         if let randomVendor = building.vendors.randomElement() {
-                            NavigationLink(destination: VendorDetailView(vendor: randomVendor, isRecomended: true)) {
+                    
+                            Button(action: {
+                                navigationVM.navigate(to: .vendorDetail(vendor: randomVendor, isRecommended: true))
+                            }) {
                                 RecommendationCard(
                                     vendorName: randomVendor.name,
                                     buildingName: building.name,
@@ -56,6 +60,7 @@ struct HomeRecommendation: View {
                         }
                     }
                 }
+            
                 .padding(5)
             }
         }
@@ -66,5 +71,5 @@ struct HomeRecommendation: View {
 }
 
 #Preview {
-    HomeRecommendation()
+    HomeRecommendation(navigationVM: NavigationViewModel())
 }

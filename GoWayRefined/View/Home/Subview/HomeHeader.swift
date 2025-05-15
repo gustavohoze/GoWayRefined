@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct HomeHeader: View {
+    var navigationVM: NavigationViewModel
     var body: some View {
         ZStack {
             Image(.homeBackground) // Background image
@@ -21,11 +22,13 @@ struct HomeHeader: View {
                     .bold()
                 Text("Ready to Explore GOP?")
                     .font(.title2)
-                NavigationLink(destination: SearchView()){
-                        Image(.searchButton)
-                            .resizable()
-                            .scaledToFit()
-                    .padding(.top, 5)
+                Button(action: {
+                    navigationVM.navigate(to: .search)
+                }) {
+                    Image(.searchButton)
+                        .resizable()
+                        .scaledToFit()
+                        .padding(.top, 5)
                 }
                 
             }

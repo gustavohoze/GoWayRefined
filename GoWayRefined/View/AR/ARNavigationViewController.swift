@@ -34,7 +34,7 @@ class ARNavigationViewController: UIViewController {
                 // Create a unique, sanitized filename for this vendor
                 let sanitizedName = vendor.name.replacingOccurrences(of: " ", with: "_")
                     .replacingOccurrences(of: "/", with: "-")
-                return baseURL.appendingPathComponent("AR_\(vendor.id)_\(sanitizedName).arworldmap")
+                return baseURL.appendingPathComponent("AR_\(sanitizedName).arworldmap")
             } else {
                 // Default name if no vendor
                 return baseURL.appendingPathComponent("ARWorldMap.arworldmap")
@@ -520,37 +520,56 @@ struct ARNavigationViewControllerRepresentable: UIViewControllerRepresentable {
 }
 
 struct ARNavigationView: View {
-    var vendor : Vendor
-    @Environment(\.presentationMode) var presentationMode
+    var vendor: Vendor
+    @EnvironmentObject var navigationVM: NavigationViewModel
+    
     var body: some View {
-        ZStack{
-
-            ARNavigationViewControllerRepresentable(
-                vendor: vendor)
-
+        ZStack {
+            ARNavigationViewControllerRepresentable(vendor: vendor)
+            
             VStack {
-                HStack{
+                HStack {
+                    // Back button to step navigation view
+                    Button {
+                        // Navigate to StepNavigationView
+                        navigationVM.goBack()
+                    } label: {
+                        HStack {
+                            Image(systemName: "chevron.left")
+                            Text("Close")
+                        }
+                    }
+                    .foregroundColor(.green)
                     
-                    // IS RECOMENDED ARE HARDCODED NEED TO BE FIXED
-                    NavigationLink{
-                        StepNavigationView(steps: vendor.stepList ?? [], vendor: vendor)
-                    } label: {
-                        Image(systemName: "chevron.left")
-                        Text("Close")
-                    }
                     Spacer()
-                    Text(vendor.name.capitalized).fontWeight(.bold).padding(.trailing,20)
+                    
+                    Text(vendor.name.capitalized)
+                        .fontWeight(.bold)
+                        .padding(.trailing, 20)
+                        .foregroundStyle(.green)
+                    
                     Spacer()
-                    NavigationLink{
-                        AROnboardingView(vendor: vendor)
+                    
+                    // Info button to AR onboarding
+                    Button {
+                        // Navigate to AR onboarding
+                        navigationVM.navigate(to: .arOnboarding(vendor: vendor))
                     } label: {
-                        Image(systemName: "info.circle").imageScale(.large)
+                        Image(systemName: "info.circle")
+                            .imageScale(.large)
                     }
-                }.padding().background(.white).frame(height: 150)
+                    .foregroundColor(.green)
+                }
+                .padding()
+                .background(.white)
+                .frame(height: 150)
+                
                 Spacer()
             }
-        }.background(.white).foregroundStyle(.green).ignoresSafeArea().navigationBarBackButtonHidden()
-       
+        }
+        .background(.white)
+        .ignoresSafeArea()
+        .navigationBarBackButtonHidden()
     }
 }
 #endif

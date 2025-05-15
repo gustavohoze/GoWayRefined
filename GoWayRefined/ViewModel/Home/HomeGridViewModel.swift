@@ -7,6 +7,7 @@ class HomeGridViewModel: ObservableObject {
         "parking", "lifestyle", "praying", "other"
     ]
     
+    
     // Function to return the appropriate destination view for each item
     func destinationView(for item: String) -> AnyView {
         switch item {

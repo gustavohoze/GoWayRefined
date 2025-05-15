@@ -2,27 +2,69 @@ import SwiftUI
 import CoreLocation
 
 struct HomeView: View {
-    // Add LocationManager to your HomeView
     @StateObject private var locationManager = LocationManager.shared
+    @StateObject private var navigationVM = NavigationViewModel()
     
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $navigationVM.navPath) {
             ZStack {
                 Color.white.ignoresSafeArea()
                 
                 VStack(alignment: .leading) {
                     ScrollView {
-                        HomeHeader()
-                        HomeGrid()
-                        HomeRecommendation()
+                        HomeHeader(navigationVM: navigationVM)
+                        HomeGrid(navigationVM: navigationVM)
+                        HomeRecommendation(navigationVM: navigationVM)
                         HomeRating()
                         Spacer()
                     }
                     .ignoresSafeArea()
                 }
             }
+            .navigationDestination(for: AppDestination.self) { destination in
+                switch destination {
+                
+                case .search:
+                    SearchView()
+                case .busway:
+                    BuswayView()
+                case .entertainment:
+                    EntertainmentView()
+                case .food:
+                    FoodView()
+                case .office:
+                    OfficeView()
+                case .parking:
+                    ParkingView()
+                case .lifestyle:
+                    LifestyleView()
+                case .praying:
+                    PrayingView()
+                case .other:
+                    OtherView()
+                    
+                    // Vendor detail with optional isRecommended flag
+                case .vendorDetail(let vendor, let isRecommended):
+                    if let isRecommended = isRecommended {
+                        VendorDetailView(vendor: vendor, isRecomended: isRecommended)
+                    } else {
+                        VendorDetailView(vendor: vendor)
+                    }
+                case .arNavigation(let vendor):
+                    ARNavigationView(vendor: vendor)
+                    
+                case .arOnboarding(let vendor):
+                    AROnboardingView(vendor: vendor)
+                    
+                case .stepNavigation(let vendor, let steps):
+                    StepNavigationView(steps: steps, vendor: vendor)
+                case .buildingDetail(let building):
+                    BuildingDetailView(building: building)
+
+                }
+            }
         }
-        .ignoresSafeArea()
+        .environmentObject(navigationVM)
         .onAppear {
             requestLocationPermission()
         }

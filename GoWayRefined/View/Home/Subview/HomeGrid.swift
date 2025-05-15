@@ -3,6 +3,7 @@ import SwiftUI
 // HomeGrid View
 struct HomeGrid: View {
     @StateObject var viewModel = HomeGridViewModel() // Initialize the ViewModel
+    var navigationVM: NavigationViewModel
     
     let columns = [
         GridItem(.flexible()),
@@ -15,26 +16,29 @@ struct HomeGrid: View {
         VStack {
             LazyVGrid(columns: columns, spacing: 15) {
                 ForEach(viewModel.items, id: \.self) { item in
-                    NavigationLink(destination: viewModel.destinationView(for: item)) {
+               
+                    Button(action: {
+                        navigateToGridDestination(item)
+                    }) {
                         VStack {
-                            Image(item) // Replace with your actual image names
+                            Image(item)
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: 40, height: 40) // Adjusted size for the icons
+                                .frame(width: 40, height: 40)
                                 .padding()
-                                .background(Color.white) // Optional background for each icon
-                                .cornerRadius(10) // Rounded corners for the icon background
-                                .shadow(radius: 4) // Shadow for depth effect
+                                .background(Color.white)
+                                .cornerRadius(10)
+                                .shadow(radius: 4)
                                 .padding(.bottom, 5)
                             
-                            Text(item.capitalized) // Capitalize the item text
+                            Text(item.capitalized)
                                 .font(.caption2)
-                                .foregroundColor(.black) // Ensure text color is readable
-                                .multilineTextAlignment(.center) // Center align text
-                                .lineLimit(1) // Limit the text to one line
-                                .frame(width:80)
+                                .foregroundColor(.black)
+                                .multilineTextAlignment(.center)
+                                .lineLimit(1)
+                                .frame(width: 80)
                         }
-                        .frame(maxWidth: .infinity) // Ensure each item takes full width
+                        .frame(maxWidth: .infinity)
                     }
                 }
             }
@@ -42,10 +46,37 @@ struct HomeGrid: View {
         }.padding(.vertical, 15)
 
     }
+    func navigateToGridDestination(_ item: String) {
+        let destination: AppDestination
+        
+        switch item {
+        case "busway":
+            destination = .busway
+        case "entertainment":
+            destination = .entertainment
+        case "food":
+            destination = .food
+        case "office":
+            destination = .office
+        case "parking":
+            destination = .parking
+        case "lifestyle":
+            destination = .lifestyle
+        case "praying":
+            destination = .praying
+        case "other":
+            destination = .other
+        default:
+            return
+        }
+        
+        navigationVM.navigate(to: destination)
+    }
+    
 }
 
 struct HomeGrid_Previews: PreviewProvider {
     static var previews: some View {
-        HomeGrid()
+        HomeGrid(navigationVM: NavigationViewModel())
     }
 }

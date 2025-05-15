@@ -1,14 +1,9 @@
-//
-//  StepsSection.swift
-//  GoWayRefined
-//
-//  Created by Gustavo Hoze Ercolesea on 14/05/25.
-//
 import SwiftUI
 
 struct StepsSection: View {
     let vendor: Vendor
     let stepList: [Step]
+    @EnvironmentObject var navigationVM: NavigationViewModel
     
     var body: some View {
         HStack {
@@ -19,19 +14,20 @@ struct StepsSection: View {
             
             Spacer()
             
-            NavigationLink(
-                destination: StepNavigationView(steps: stepList, vendor: vendor),
-                label: {
-                    Text("View Directions")
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(Color.green)
-                        .cornerRadius(8)
-                }
-            )
+            Button {
+                // Navigate to step navigation view using our central NavigationViewModel
+                navigationVM.navigate(to: .stepNavigation(vendor: vendor, steps: stepList))
+            } label: {
+                Text("View Directions")
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+                    .background(Color.green)
+                    .cornerRadius(8)
+            }
             .padding(.top)
         }
         .frame(maxWidth: .infinity)
     }
 }
+

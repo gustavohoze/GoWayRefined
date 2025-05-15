@@ -1,26 +1,27 @@
-// MARK: - StepNavigationViewModel
 import SwiftUI
 
 // MARK: - StepNavigationView
 struct StepNavigationView: View {
     @StateObject private var viewModel: StepNavigationViewModel
+    @EnvironmentObject var navigationVM: NavigationViewModel
     
     init(steps: [Step], vendor: Vendor) {
         self._viewModel = StateObject(wrappedValue:
-            StepNavigationViewModel(steps: steps, vendor: vendor)
+                                        StepNavigationViewModel(steps: steps, vendor: vendor)
         )
     }
     
     var body: some View {
+        contentView().navigationBarBackButtonHidden()
+    }
+    
+    private func contentView() -> some View {
         if viewModel.showInitialView {
-            // Initial view matching the provided image
-            initialView()
+            return AnyView(initialView())
         } else if viewModel.isOnFinalStep() {
-            // Final destination/arrival view
-            finalView()
+            return AnyView(finalView())
         } else {
-            // Step navigation view (now starts from the second step)
-            navigationView(vendor: viewModel.vendor)
+            return AnyView(navigationView(vendor: viewModel.vendor))
         }
     }
     
@@ -30,14 +31,14 @@ struct StepNavigationView: View {
         VStack(spacing: 0) {
             // Close button
             HStack {
-                closeButton(vendor: viewModel.vendor)
+                closeButton()
                 Spacer()
             }
             
             Spacer()
             
             // Bus image placeholder
-            Image(viewModel.vendor.image) // Using existing image as placeholder
+            Image(viewModel.vendor.image)
                 .resizable()
                 .scaledToFit()
                 .frame(height: 500)
@@ -66,14 +67,13 @@ struct StepNavigationView: View {
             .padding(.bottom, 50)
         }
         .background(Color.white)
-        .navigationBarHidden(true)
     }
     
     private func finalView() -> some View {
         VStack(spacing: 0) {
             // Close button
             HStack {
-                closeButton(vendor: viewModel.vendor)
+                closeButton()
                 Spacer()
             }
             
@@ -124,14 +124,13 @@ struct StepNavigationView: View {
             .padding(.bottom, 30)
         }
         .background(Color.white)
-        .navigationBarHidden(true)
     }
     
     private func navigationView(vendor: Vendor) -> some View {
         VStack(spacing: 0) {
             // Close button
             HStack {
-                closeButton(vendor: viewModel.vendor)
+                closeButton()
                 Spacer()
             }
             
@@ -148,6 +147,7 @@ struct StepNavigationView: View {
                 VStack {
                     Spacer().frame(height: 220)
                     
+                    // AR Button
                     ARButtonWithPermission(vendor: vendor)
                     .padding(.bottom, 20)
                 }
@@ -183,15 +183,16 @@ struct StepNavigationView: View {
             .padding(.bottom, 30)
         }
         .background(Color.white)
-        .navigationBarHidden(true)
     }
     
     // MARK: - Helper View Components
     
-    private func closeButton(vendor : Vendor, isRecommended: Bool = false) -> some View {
-        NavigationLink(destination: {
-            VendorDetailView(vendor: vendor)
-        }) {
+    private func closeButton() -> some View {
+        // Close button that properly returns to the vendor detail view
+        Button {
+            // This should always go back to the previous screen (vendor detail)
+            navigationVM.goBack()
+        } label: {
             HStack {
                 Image(systemName: "chevron.left")
                 Text("Close")

@@ -1,13 +1,14 @@
 import SwiftUI
 
 struct SearchHeader: View {
-//    @Namespace private var namespace
     @Environment(\.presentationMode) var presentationMode
     @FocusState var isTextFieldFocused: Bool
     @Binding var searchText: String
-    var building : Building?
-    var vendor : Vendor?
-    var isRecomended : Bool = false
+    @EnvironmentObject var navigationVM: NavigationViewModel // Add NavigationViewModel
+    
+    var building: Building?
+    var vendor: Vendor?
+    var isRecomended: Bool = false
     
     var body: some View {
         VStack {
@@ -18,15 +19,9 @@ struct SearchHeader: View {
                     .ignoresSafeArea()
                 
                 HStack(alignment: .center, spacing: 20) {
-                    // Close button "X" to dismiss the search view
-                    navigationButton
-//                        .transition(.asymmetric(
-//                        insertion: .move(edge: .trailing),
-//                        removal: .move(edge: .leading)
-//                    ))
-//                    .matchedGeometryEffect(id: "transition", in: namespace)
-
-                    .padding(.leading, 20)
+                   
+                    backButton
+                        .padding(.leading, 20)
                     
                     // Modified TextField with explicit placeholder styling
                     ZStack(alignment: .leading) {
@@ -50,92 +45,94 @@ struct SearchHeader: View {
             }
         }
         .background(.white)
-        .navigationBarBackButtonHidden()
         .ignoresSafeArea()
         .onAppear {
             // Clear the search text whenever the view appears
             searchText = ""
         }
     }
+    
     @ViewBuilder
-    private var navigationButton: some View {
+    private var backButton: some View {
         if building != nil {
-            // Navigate to BuildingDetail if building is provided
-            NavigationLink(destination: OfficeView()) {
+            // Go back instead of adding a new destination
+            Button {
+                // Go back one level in the navigation stack
+                navigationVM.goBack()
+            } label: {
                 Image(systemName: "chevron.left")
                     .font(.title)
                     .foregroundColor(.white.opacity(0.7))
             }
-        }else if let vendor = vendor {
+        } else if vendor != nil {
             if isRecomended {
-                NavigationLink(destination: {
-                    HomeView().navigationBarBackButtonHidden()
-                }) {
+                Button {
+                    // Return to home by clearing navigation path
+                    navigationVM.goToRoot()
+                } label: {
                     Image(systemName: "xmark")
                         .font(.title)
                         .foregroundColor(.white.opacity(0.5))
                 }
-            }else{
-                NavigationLink(destination: detailView(for: vendor)) {
-                    Image(systemName: "chevron.left") // Changed to back arrow
+            } else {
+                Button {
+                    // Go back one level
+                    navigationVM.goBack()
+                } label: {
+                    Image(systemName: "chevron.left")
                         .font(.title)
                         .foregroundColor(.white.opacity(0.7))
-            }
-           
+                }
             }
         } else {
-           
-                NavigationLink(destination: {
-                    HomeView().navigationBarBackButtonHidden()
-                }) {
-                    Image(systemName: "xmark")
-                        .font(.title)
-                        .foregroundColor(.white.opacity(0.5))
-                }
-            
-            
+            Button {
+                // Return to home by clearing navigation path
+                navigationVM.goToRoot()
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.title)
+                    .foregroundColor(.white.opacity(0.5))
+            }
         }
     }
-    func detailView(for vendor: Vendor) ->  AnyView {
+    // Helper function to determine the appropriate navigation destination
+    private func navigateToAppropriateView(for vendor: Vendor) {
         switch vendor.type {
         case .food:
-            return AnyView(FoodView())
+            navigationVM.navigate(to: .food)
         case .entertainment:
-            return AnyView(EntertainmentView())
+            navigationVM.navigate(to: .entertainment)
         case .busway:
-            return AnyView(BuswayView())
+            navigationVM.navigate(to: .busway)
         case .parkingLot:
-            return AnyView(ParkingView())
+            navigationVM.navigate(to: .parking)
         case .lifestyle:
-            return AnyView(LifestyleView())
+            navigationVM.navigate(to: .lifestyle)
         case .worship:
-            return AnyView(PrayingView())
+            navigationVM.navigate(to: .praying)
         case .other:
-            return AnyView(OtherView())
+            navigationVM.navigate(to: .other)
         }
     }
 }
 
-
 struct SearchHeader_Preview: PreviewProvider {
     static var previews: some View {
         Group {
+            // Create a mock NavigationViewModel for preview
+            let navVM = NavigationViewModel()
+            
             // Light mode preview
             SearchHeader(searchText: .constant(""))
+                .environmentObject(navVM)
                 .previewLayout(.sizeThatFits)
                 .preferredColorScheme(.light)
             
             // Dark mode preview
             SearchHeader(searchText: .constant(""))
+                .environmentObject(navVM)
                 .previewLayout(.sizeThatFits)
                 .preferredColorScheme(.dark)
         }
     }
-}
-
-extension AnyTransition {
-    static var backslide: AnyTransition {
-        AnyTransition.asymmetric(
-            insertion: .move(edge: .trailing),
-            removal: .move(edge: .leading))}
 }

@@ -54,8 +54,7 @@ class AROnboardingManager {
 struct ARButtonWithPermission: View {
     @StateObject private var permissionManager = CameraPermissionManager()
     @State private var showPermissionAlert = false
-    @State private var navigateToOnboarding = false
-    @State private var navigateDirectlyToAR = false
+    @EnvironmentObject var navigationVM: NavigationViewModel
     
     var vendor: Vendor
     
@@ -73,12 +72,6 @@ struct ARButtonWithPermission: View {
             .background(Color.green)
             .cornerRadius(20)
         }
-        .navigationDestination(isPresented: $navigateToOnboarding) {
-            AROnboardingView(vendor: vendor)
-        }
-        .navigationDestination(isPresented: $navigateDirectlyToAR) {
-            ARNavigationView(vendor: vendor)
-        }
         .alert(isPresented: $showPermissionAlert) {
             Alert(
                 title: Text("Camera Access Required"),
@@ -95,10 +88,10 @@ struct ARButtonWithPermission: View {
             // Check if user has completed onboarding before
             if AROnboardingManager.shared.hasCompletedOnboarding() {
                 // Already went through onboarding, go directly to AR
-                navigateDirectlyToAR = true
+                navigationVM.navigate(to: .arNavigation(vendor: vendor))
             } else {
                 // First time, show onboarding
-                navigateToOnboarding = true
+                navigationVM.navigate(to: .arOnboarding(vendor: vendor))
             }
             
         case .notDetermined:
@@ -108,10 +101,10 @@ struct ARButtonWithPermission: View {
                     // Check if user has completed onboarding before
                     if AROnboardingManager.shared.hasCompletedOnboarding() {
                         // Already went through onboarding, go directly to AR
-                        navigateDirectlyToAR = true
+                        navigationVM.navigate(to: .arNavigation(vendor: vendor))
                     } else {
                         // First time, show onboarding
-                        navigateToOnboarding = true
+                        navigationVM.navigate(to: .arOnboarding(vendor: vendor))
                     }
                 }
             }
@@ -133,91 +126,6 @@ struct ARButtonWithPermission: View {
     }
 }
 
-// MARK: - Alternative Implementation using Sheet presentation
-//struct TryInARButton: View {
-//    @StateObject private var permissionManager = CameraPermissionManager()
-//    @State private var showPermissionAlert = false
-//    @State private var showAROnboarding = false
-//    @State private var showDirectAR = false
-//    var vendor: Vendor
-//    
-//    var body: some View {
-//        Button(action: {
-//            handleARButtonTap()
-//        }) {
-//            HStack {
-//                Text("Try in AR")
-//                Image(systemName: "cube.transparent")
-//            }
-//            .foregroundColor(.white)
-//            .padding(.horizontal, 20)
-//            .padding(.vertical, 10)
-//            .background(Color.green)
-//            .cornerRadius(20)
-//        }
-//        .alert(isPresented: $showPermissionAlert) {
-//            Alert(
-//                title: Text("Camera Access Required"),
-//                message: Text("AR features require camera access. Please allow camera access in Settings."),
-//                primaryButton: .default(Text("Open Settings"), action: openSettings),
-//                secondaryButton: .cancel()
-//            )
-//        }
-//        .fullScreenCover(isPresented: $showAROnboarding, onDismiss: {
-//            // When onboarding is dismissed, mark it as completed
-//            AROnboardingManager.shared.markOnboardingCompleted()
-//        }) {
-//            AROnboardingView(vendor: vendor)
-//        }
-//        .fullScreenCover(isPresented: $showDirectAR) {
-//            ARNavigationView(vendor: vendor)
-//        }
-//    }
-//    
-//    private func handleARButtonTap() {
-//        switch permissionManager.cameraPermissionStatus {
-//        case .authorized:
-//            // Check if user has completed onboarding before
-//            if AROnboardingManager.shared.hasCompletedOnboarding() {
-//                // Already went through onboarding, go directly to AR
-//                showDirectAR = true
-//            } else {
-//                // First time, show onboarding
-//                showAROnboarding = true
-//            }
-//            
-//        case .notDetermined:
-//            // Request permission
-//            permissionManager.requestCameraPermission { granted in
-//                if granted {
-//                    // Check if user has completed onboarding before
-//                    if AROnboardingManager.shared.hasCompletedOnboarding() {
-//                        // Already went through onboarding, go directly to AR
-//                        showDirectAR = true
-//                    } else {
-//                        // First time, show onboarding
-//                        showAROnboarding = true
-//                    }
-//                }
-//            }
-//            
-//        case .denied, .restricted:
-//            // Show alert to direct user to settings
-//            showPermissionAlert = true
-//            
-//        @unknown default:
-//            // Handle future authorization status values
-//            showPermissionAlert = true
-//        }
-//    }
-//    
-//    private func openSettings() {
-//        if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
-//            UIApplication.shared.open(settingsURL)
-//        }
-//    }
-//}
-
 // MARK: - Extension to mark AR onboarding as completed
 extension AROnboardingView {
     // Call this when the user completes the onboarding
@@ -229,21 +137,20 @@ extension AROnboardingView {
 // MARK: - Get Started Button for Last Onboarding Page
 struct GetStartedButton: View {
     var vendor: Vendor
+    @EnvironmentObject var navigationVM: NavigationViewModel
     
     var body: some View {
-        NavigationLink(destination: ARNavigationView(vendor: vendor)
-            .navigationBarBackButtonHidden(true)) {
-                Text("Get Started")
-                    .font(.system(size: 18, weight: .medium))
-                    .foregroundColor(.white)
-                    .frame(width: 200, height: 50)
-                    .background(Color.green)
-                    .cornerRadius(25)
-            }
-            .onAppear {
-                // Mark onboarding as completed when user reaches the last page
-                AROnboardingManager.shared.markOnboardingCompleted()
-            }
+        Button {
+            // Navigate to AR Navigation
+            navigationVM.navigate(to: .arNavigation(vendor: vendor))
+        } label: {
+            Text("Get Started")
+                .font(.system(size: 18, weight: .medium))
+                .foregroundColor(.white)
+                .frame(width: 200, height: 50)
+                .background(Color.green)
+                .cornerRadius(25)
+        }
     }
 }
 

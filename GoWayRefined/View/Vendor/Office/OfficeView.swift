@@ -5,6 +5,7 @@ import Combine
 struct OfficeView: View {
     var buildings: [Building] = BuildingDataModel.shared.getAllBuildings()
     @State var searchText: String = ""
+    @EnvironmentObject var navigationVM: NavigationViewModel
     
     // Use StateObject to maintain the LocationManager instance throughout the view lifecycle
     @StateObject private var locationManager = LocationManager.shared
@@ -20,50 +21,55 @@ struct OfficeView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            ZStack{
-                Color.white
+        // Remove the NavigationStack as it's now part of HomeView
+        ZStack {
+            Color.white
+            
+            VStack {
+                SearchHeader(searchText: $searchText)
                 
-                VStack {
-                    SearchHeader(searchText: $searchText)
-                    
-                    if !filteredBuildings.isEmpty {
-                        ScrollView {
-                            VStack {
-                                ForEach(filteredBuildings, id: \.id) { building in
-                                    NavigationLink(destination: BuildingDetailView(building: building)) {
-                                        BuildingCard(
-                                            buildingName: building.name,
-                                            buildingImage: building.image,
-                                            latitude: building.latitude,
-                                            longitude: building.longitude,
-                                            rating: building.rating,
-                                            items: building.vendors
-                                            // No need to pass userLocation here anymore
-                                        )
-                                    }
-                                    .padding(.bottom, 10)
+                if !filteredBuildings.isEmpty {
+                    ScrollView {
+                        VStack {
+                            ForEach(filteredBuildings, id: \.id) { building in
+                                // Replace NavigationLink with Button
+                                Button {
+                                    // Navigate to building detail
+                                    navigationVM.navigate(to: .buildingDetail(building: building))
+                                } label: {
+                                    BuildingCard(
+                                        buildingName: building.name,
+                                        buildingImage: building.image,
+                                        latitude: building.latitude,
+                                        longitude: building.longitude,
+                                        rating: building.rating,
+                                        items: building.vendors
+                                    )
                                 }
+                                .padding(.bottom, 10)
                             }
-                            .navigationBarBackButtonHidden()
-                            .padding(.top, 10)
                         }
+                        .padding(.top, 10)
+                    }
+                    .foregroundStyle(.black)
+                    .frame(height: 700)
+                    .padding(.horizontal, 10)
+                }
+                else {
+                    Text("No buildings found")
                         .foregroundStyle(.black)
-                        .frame(height: 700)
-                        .padding(.horizontal, 10)
-                    }
-                    else {
-                        Text("No buildings found")
-                            .foregroundStyle(.black)
-                        Spacer()
-                    }
-                }.ignoresSafeArea()
+                    Spacer()
+                }
             }
-        }
-        // No need for onAppear anymore - the StateObject will handle location updates
+            .ignoresSafeArea()
+        }.navigationBarBackButtonHidden().background(.white)
     }
 }
 
 #Preview {
-    OfficeView()
+    // Create a mock NavigationViewModel for preview
+    let navVM = NavigationViewModel()
+    
+    return OfficeView()
+        .environmentObject(navVM)
 }
