@@ -42,7 +42,7 @@ struct HomeRecommendation: View {
                 .padding()
             
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 16) {
+                HStack(spacing: 0) {
                     ForEach(randomBuildings) { building in
                         if let randomVendor = building.vendors.randomElement() {
                     

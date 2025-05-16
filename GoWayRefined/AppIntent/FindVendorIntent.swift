@@ -2,6 +2,7 @@ import Foundation
 import AppIntents
 
 struct FindVendorIntent: AppIntent {
+    
     static var title: LocalizedStringResource = "Find Vendor"
     static var description: IntentDescription = IntentDescription(
         "Navigate to a specific vendor",

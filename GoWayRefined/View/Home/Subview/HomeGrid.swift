@@ -28,7 +28,7 @@ struct HomeGrid: View {
                                 .padding()
                                 .background(Color.white)
                                 .cornerRadius(10)
-                                .shadow(radius: 4)
+                                .shadow(radius: 2)
                                 .padding(.bottom, 5)
                             
                             Text(item.capitalized)

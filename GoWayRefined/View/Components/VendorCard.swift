@@ -12,7 +12,7 @@ struct VendorCard: View {
             Image(viewModel.vendorImage)
                 .resizable()
                 .frame(maxWidth: 75, maxHeight: 75)
-                .scaledToFit()
+                .scaledToFill()
                 .padding(.horizontal, 10)
             
             VStack(alignment: .leading, spacing: 3) {

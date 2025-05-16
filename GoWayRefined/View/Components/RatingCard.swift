@@ -41,7 +41,7 @@ struct RatingCard: View {
                                     }) {
                                         Image(systemName: star <= rating ? "star.fill" : "star")
                                             .resizable()
-                                            .scaledToFit()
+                                            .scaledToFill()
                                             .frame(width: 15, height: 15)
                                             .foregroundColor(star <= rating ? .yellow : .gray)
                                     }
@@ -59,7 +59,7 @@ struct RatingCard: View {
             .padding(.horizontal, 5)
             .background(Color.white)
             .cornerRadius(10)
-            .shadow(radius: 3)
+            .shadow(radius: 2)
             .padding(.horizontal, 10)
             .transition(.asymmetric(
                 insertion: .opacity.combined(with: .scale),

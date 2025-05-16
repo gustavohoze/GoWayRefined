@@ -13,7 +13,7 @@ struct RecommendationCard: View {
                 Image(vendorImage)
                     .resizable()
                     .frame(width: 50, height: 50)
-                    .scaledToFit()
+                    .scaledToFill()
                     .padding(.leading, 10)
                 
                 VStack(alignment: .leading, spacing: 3) {
@@ -61,7 +61,7 @@ struct RecommendationCard: View {
         .padding(.horizontal, 5)
         .background(Color.white)
         .cornerRadius(10)
-        .shadow(radius: 3)
+        .shadow(radius: 2)
         .padding(.horizontal, 10)
     }
 }

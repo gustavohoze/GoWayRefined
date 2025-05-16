@@ -532,7 +532,7 @@ struct ARNavigationView: View {
                     // Back button to step navigation view
                     Button {
                         // Navigate to StepNavigationView
-                        navigationVM.goBack()
+                        navigationVM.replaceCurrentView(with: .stepNavigation(vendor: vendor, steps: vendor.stepList ?? []))
                     } label: {
                         HStack {
                             Image(systemName: "chevron.left")

@@ -40,7 +40,7 @@ struct HomeRating: View {
                 .frame(maxWidth: .infinity)
             } else {
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 16) {
+                    HStack(spacing: 0) {
                         ForEach(Array(vendorCards.enumerated()), id: \.offset) { index, card in
                             let itemId = "\(card.building.id)-\(card.vendor.id)"
                             

@@ -31,7 +31,7 @@ struct BuildingCard: View {
             Image(buildingImage)
                 .resizable()
                 .frame(width: 75, height: 75)
-                .scaledToFit()
+                .scaledToFill()
                 .padding(.horizontal, 10)
             
             VStack(alignment: .leading, spacing: 5) {

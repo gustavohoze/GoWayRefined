@@ -15,5 +15,14 @@
 			</array>
 		</dict>
 	</array>
+	<key>INAlternativeAppNames</key>
+	<array>
+		<dict>
+			<key>INAlternativeAppName</key>
+			<string>&quot;GoWayRefined&quot;</string>
+			<key>INAlternativeAppNamePronounciationHint</key>
+			<string>&quot;Go way refined&quot;</string>
+		</dict>
+	</array>
 </dict>
 </plist>
