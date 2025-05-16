@@ -59,54 +59,18 @@ class AppNavigationManager: ObservableObject {
     }
     
     // Check for pending navigation requests
-    func checkPendingNavigationRequests() {
-        // Only check if we're not already processing navigation
-        guard !isProcessingNavigation else {
-            print("NavigationManager: Already processing navigation, skipping check")
-            return
-        }
-        
-        // Check building navigation first
-        if let buildingIDString = UserDefaults.standard.string(forKey: "pendingBuildingNavigation"),
-           let buildingID = UUID(uuidString: buildingIDString) {
-            
-            // Clear from UserDefaults immediately
-            UserDefaults.standard.removeObject(forKey: "pendingBuildingNavigation")
-            
-            // Find the building
-            let allBuildings = BuildingDataModel.shared.getAllBuildings()
-            if let building = allBuildings.first(where: { $0.id == buildingID }) {
-                print("NavigationManager: Found pending building navigation: \(building.name)")
-                navigateToBuilding(building)
-                return
-            }
-        }
-        
-        // Check vendor navigation
-        if let vendorIDString = UserDefaults.standard.string(forKey: "pendingVendorNavigation"),
-           let vendorID = UUID(uuidString: vendorIDString) {
-            
-            // Clear from UserDefaults immediately
-            UserDefaults.standard.removeObject(forKey: "pendingVendorNavigation")
-            
-            // Find the vendor
-            let allVendors = BuildingDataModel.shared.getAllBuildings().flatMap { $0.vendors }
-            if let vendor = allVendors.first(where: { $0.id == vendorID }) {
-                print("NavigationManager: Found pending vendor navigation: \(vendor.name)")
-                navigateToVendor(vendor)
-                return
-            }
-        }
-        
-        // Check vendor type navigation
+    // In checkPendingVendorTypeNavigation method
+    private func checkPendingVendorTypeNavigation() {
         if let typeString = UserDefaults.standard.string(forKey: "pendingVendorTypeNavigation"),
            let type = VendorType(rawValue: typeString) {
             
             // Clear from UserDefaults immediately
             UserDefaults.standard.removeObject(forKey: "pendingVendorTypeNavigation")
             
-            print("NavigationManager: Found pending vendor type navigation: \(type.description())")
-            navigateToVendorType(type)
+            print("DEBUG: Found vendor type in UserDefaults: \(typeString), raw value: \(type.rawValue)")
+            
+            // Temporarily disable automatic navigation
+            // navigateToVendorType(type)
         }
     }
     
@@ -226,70 +190,100 @@ class AppNavigationManager: ObservableObject {
         switch currentState {
         case .idle:
             print("NavigationManager: No navigation to execute")
+            isProcessingNavigation = false
             
         case .navigatingToBuilding(let building):
             print("NavigationManager: Executing navigation to building: \(building.name)")
             
-            // First reset navigation
-            navVM.goToRoot()
-            
-            // Short delay to ensure the navigation stack is clear
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                // Navigate to building
-                navVM.navigate(to: .buildingDetail(building: building))
+            // Use a direct reset and navigate approach
+            DispatchQueue.main.async {
+                // Create a completely fresh navigation path
+                navVM.navPath = NavigationPath()
                 
-                // Clear state after successful navigation
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    self.buildingToNavigateTo = nil
+                // Navigate after a short delay
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    print("NavigationManager: Adding building destination after reset")
+                    
+                    // Explicitly create the destination to avoid any type issues
+                    let destination: AppDestination = .buildingDetail(building: building)
+                    navVM.navigate(to: destination)
+                    
+                    // Clear state after successful navigation
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        self.buildingToNavigateTo = nil
+                        self.currentState = .idle
+                        self.isProcessingNavigation = false
+                        print("NavigationManager: Navigation to building complete")
+                    }
                 }
             }
             
         case .navigatingToVendor(let vendor):
             print("NavigationManager: Executing navigation to vendor: \(vendor.name)")
             
-            // First reset navigation
-            navVM.goToRoot()
-            
-            // Short delay to ensure the navigation stack is clear
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                // Navigate to vendor
-                navVM.navigate(to: .vendorDetail(vendor: vendor, isRecommended: nil))
+            // Use a direct reset and navigate approach
+            DispatchQueue.main.async {
+                // Create a completely fresh navigation path
+                navVM.navPath = NavigationPath()
                 
-                // Clear state after successful navigation
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    self.vendorToNavigateTo = nil
+                // Navigate after a short delay
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    print("NavigationManager: Adding vendor destination after reset")
+                    
+                    // Explicitly create the destination to avoid any type issues
+                    let destination: AppDestination = .vendorDetail(vendor: vendor, isRecommended: nil)
+                    navVM.navigate(to: destination)
+                    
+                    // Clear state after successful navigation
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        self.vendorToNavigateTo = nil
+                        self.currentState = .idle
+                        self.isProcessingNavigation = false
+                        print("NavigationManager: Navigation to vendor complete")
+                    }
                 }
             }
             
         case .navigatingToVendorType(let type):
             print("NavigationManager: Executing navigation to vendor type: \(type.description())")
             
-            // First reset navigation
-            navVM.goToRoot()
-            
-            // Short delay to ensure the navigation stack is clear
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                // Navigate to appropriate destination based on vendor type
-                switch type {
-                case .food:
-                    navVM.navigate(to: .food)
-                case .entertainment:
-                    navVM.navigate(to: .entertainment)
-                case .busway:
-                    navVM.navigate(to: .busway)
-                case .parkingLot:
-                    navVM.navigate(to: .parking)
-                case .lifestyle:
-                    navVM.navigate(to: .lifestyle)
-                case .worship:
-                    navVM.navigate(to: .praying)
-                case .other:
-                    navVM.navigate(to: .other)
-                }
+            // Use a direct reset and navigate approach
+            DispatchQueue.main.async {
+                // Create a completely fresh navigation path
+                navVM.navPath = NavigationPath()
                 
-                // Clear state after successful navigation
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    self.vendorTypeToNavigateTo = nil
+                // Navigate after a short delay
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    print("NavigationManager: Adding vendor type destination after reset")
+                    
+                    // Create the appropriate destination
+                    let destination: AppDestination
+                    switch type {
+                    case .food:
+                        destination = .food
+                    case .entertainment:
+                        destination = .entertainment
+                    case .busway:
+                        destination = .busway
+                    case .parkingLot:
+                        destination = .parking
+                    case .lifestyle:
+                        destination = .lifestyle
+                    case .worship:
+                        destination = .praying
+                    case .other:
+                        destination = .other
+                    }
+                    
+                    navVM.navigate(to: destination)
+                    
+                    // Clear state after successful navigation
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        self.vendorTypeToNavigateTo = nil
+                        self.currentState = .idle
+                        self.isProcessingNavigation = false
+                        print("NavigationManager: Navigation to vendor type complete")
+                    }
                 }
             }
         }

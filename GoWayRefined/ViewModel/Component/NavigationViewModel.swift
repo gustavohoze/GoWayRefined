@@ -3,14 +3,40 @@ import SwiftUI
 class NavigationViewModel: ObservableObject {
     @Published var navPath = NavigationPath()
     
+    // Add this to ensure HomeView is always the root
+    private var isInitialNavigation = true
+    
     // Navigate to a destination
     func navigate(to destination: AppDestination) {
+        // If this is coming from a shortcut or external source,
+        // make sure we're starting fresh
+        if isInitialNavigation {
+            // Start with a clean path
+            navPath = NavigationPath()
+            isInitialNavigation = false
+        }
+        
+        // Now navigate to the destination
         navPath.append(destination)
     }
+    
+    // Specialized navigation for shortcuts and Siri
+    func navigateFromExternalSource(to destination: AppDestination) {
+        print("NavigationViewModel: Navigating from external source to \(destination)")
+        
+        // Always reset path when coming from an external source
+        navPath = NavigationPath()
+        
+        // Small delay to ensure UI is ready
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.navPath.append(destination)
+        }
+    }
+    
     // Add this to NavigationViewModel
     func replaceCurrentView(with destination: AppDestination) {
         if !navPath.isEmpty {
-            navPath.removeLast(2) // Remove current view
+            navPath.removeLast() // Remove current view
             navPath.append(destination) // Add new destination
         } else {
             navigate(to: destination) // Just navigate if stack is empty
@@ -34,9 +60,10 @@ class NavigationViewModel: ObservableObject {
         }
     }
     
-    // Go back to root
+    // Go back to root (HomeView)
     func goToRoot() {
         navPath = NavigationPath()
+        isInitialNavigation = true
     }
     
     // Go back until a specific destination is at the top
@@ -52,6 +79,11 @@ class NavigationViewModel: ObservableObject {
                 break
             }
         }
+    }
+    
+    // Call this when app becomes active
+    func resetForAppActivation() {
+        goToRoot()
     }
 }
 

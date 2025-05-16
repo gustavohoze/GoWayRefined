@@ -27,16 +27,22 @@ struct GoWayRefinedApp: App {
                     print("App initialized with Siri support and navigation manager")
                 }
         }
+        // In your GoWayRefinedApp.swift
         .onChange(of: scenePhase) { oldPhase, newPhase in
             if newPhase == .active {
-                // App has become active
                 print("App became active")
                 
+                // DEBUG: Check UserDefaults for any pending navigation
+                if let typeString = UserDefaults.standard.string(forKey: "pendingVendorTypeNavigation") {
+                    print("DEBUG: Found pendingVendorTypeNavigation in UserDefaults: \(typeString)")
+                    
+                    // Clear it immediately to prevent automatic navigation
+                    UserDefaults.standard.removeObject(forKey: "pendingVendorTypeNavigation")
+                }
+                
                 // Check for pending navigation requests in the navigation manager
-                navigationManager.checkPendingNavigationRequests()
-            } else if newPhase == .background {
-                // App went to background
-                print("App went to background")
+                // Comment this out temporarily for debugging
+                // navigationManager.checkPendingNavigationRequests()
             }
         }
     }
