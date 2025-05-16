@@ -160,7 +160,269 @@ func generateVendors(type: VendorType, count: Int) -> [Vendor] {
 
 func generateBuilding(name: String = "Green Office Park", latitude: Double = -6.30064, longitude: Double = 106.65054, vendorCount: Int = 5, count: Int) -> [Building] {
     var buildings: [Building] = []
-    let realBuilding: Building = Building(name: "Green Office Park 9", image: "gop_9", latitude: -6.30263, longitude: 106.65336, vendors: [Vendor(name: "Shower Room", image: "shower_room", type: .other, stepList: [Step(image: "shower_step1", description: "Find this starting point"), Step(image: "shower_step2", description: "Go straight, the  go down by lift or stairs"), Step(image: "shower_step3", description: "Turn Left"), Step(image: "shower_step4", description: "Turn Left"), Step(image: "shower_step5", description: "You Have Arrived")])], rating: 5)
+    let showerRoomSteps: [Step] = [
+        Step(image: "shower_step1", description: "Find this starting point"),
+        Step(image: "shower_step2", description: "Go straight, then go down by lift or stairs"),
+        Step(image: "shower_step3", description: "Turn Left"),
+        Step(image: "shower_step4", description: "Turn Left"),
+        Step(image: "shower_step5", description: "You Have Arrived")
+    ]
+    
+    // Create restroom steps
+    let restroomSteps: [Step] = [
+        Step(image: "restroom_step1", description: "Find this starting point"),
+        Step(image: "restroom_step2", description: "Turn Right"),
+        Step(image: "restroom_step3", description: "See the hallway? Go straight"),
+        Step(image: "restroom_step4", description: "You Have Arrived")
+    ]
+    
+    // Create GOP 9 vendors
+    let gop9Vendors: [Vendor] = [
+        Vendor(name: "Shower Room", image: "shower_room", type: .other, stepList: showerRoomSteps),
+        Vendor(name: "Auditorium", image: "auditorium", type: .entertainment),
+        Vendor(name: "Parking Area", image: "parking_area", type: .parkingLot),
+        Vendor(name: "Prayer Room", image: "prayer_room", type: .worship),
+        Vendor(name: "Restroom", image: "restroom", type: .other, stepList: restroomSteps),
+        Vendor(name: "Canteen", image: "canteen_gop9", type: .food),
+        Vendor(name: "Outdoor Park", image: "outdoor_park", type: .lifestyle),
+        Vendor(name: "Alfamart", image: "alfamart", type: .lifestyle),
+        Vendor(name: "Apple Developer Academy", image: "appdev", type: .other),
+        Vendor(name: "Commsult Indonesia", image: "commsult", type: .other),
+        Vendor(name: "Purwadhika Digital Technology School", image: "purwadhika", type: .other),
+        Vendor(name: "Monash University", image: "monash", type: .other),
+        Vendor(name: "Farmsco Indonesia", image: "farmsco", type: .other),
+        Vendor(name: "Eka Hospital Office", image: "eka_hospital", type: .other),
+        Vendor(name: "NTT Data", image: "ntt_data", type: .other),
+        Vendor(name: "PT Bithealth Indonesia", image: "bithealth", type: .other),
+        Vendor(name: "GBI", image: "gbi", type: .worship),
+        Vendor(name: "PT Sinar Mitbana Mas", image: "sinar_mitbana", type: .other),
+        Vendor(name: "PT Reinhausen Indonesia", image: "reinhausen", type: .other),
+        Vendor(name: "NEX Entertaiment", image: "nex", type: .entertainment),
+        Vendor(name: "Living Lab Ventures", image: "living_lab", type: .other)
+    ]
+    
+    // Create GOP 9 Building
+    let gop9Building = Building(
+        name: "Green Office Park 9",
+        image: "gop_9",
+        latitude: -6.30263,
+        longitude: 106.65336,
+        vendors: gop9Vendors,
+        rating: 5.0
+    )
+    
+    // Create GOP 1 vendors
+    let gop1Vendors: [Vendor] = [
+        Vendor(name: "Traveloka Campus", image: "traveloka_campus", type: .other),
+        Vendor(name: "Gowork Coworking Space", image: "go_work", type: .other),
+        Vendor(name: "Sirclo", image: "sirclo", type: .other),
+        Vendor(name: "CIMB Niaga", image: "cimb_niaga", type: .other),
+        Vendor(name: "Indoor Park", image: "indoor_park", type: .lifestyle),
+        Vendor(name: "36 Grams Coffee", image: "tigaenam_coffe", type: .food),
+        Vendor(name: "Family Mart", image: "family_mart", type: .lifestyle),
+        Vendor(name: "Restroom", image: "restroom", type: .other),
+        Vendor(name: "Prayer Room", image: "prayer_room", type: .worship),
+        Vendor(name: "Parking Area", image: "parking_area", type: .parkingLot)
+    ]
+    
+    // Create GOP 1 Building
+    let gop1Building = Building(
+        name: "Green Office Park 1",
+        image: "gop_1",
+        latitude: -6.30064,
+        longitude: 106.65054,
+        vendors: gop1Vendors,
+        rating: 4.8
+    )
+    
+    // Create GOP 5 vendors (Parking Area)
+    let gop5Vendors: [Vendor] = [
+        Vendor(name: "Motorbike Parking Area", image: "motor_parking", type: .parkingLot),
+        Vendor(name: "Car Parking Area", image: "car_parking", type: .parkingLot)
+    ]
+    
+    // Create GOP 5 Building
+    let gop5Building = Building(
+        name: "Green Office Park 5",
+        image: "gop_5",
+        latitude: -6.30285,
+        longitude: 106.65170,
+        vendors: gop5Vendors,
+        rating: 4.5
+    )
+    
+    // Create GOP 6 vendors
+    let gop6Vendors: [Vendor] = [
+        Vendor(name: "Restroom", image: "restroom", type: .other),
+        Vendor(name: "Canteen", image: "canteen_gop9", type: .food),
+        Vendor(name: "Tebemori Coffee", image: "tebemori_coffe", type: .food),
+        Vendor(name: "Kozaku Pan", image: "kozaku_pan", type: .food),
+        Vendor(name: "Lawson", image: "lawson", type: .lifestyle),
+        Vendor(name: "Bank Sinarmas", image: "bank_sinarmas", type: .other),
+        Vendor(name: "Bank Mandiri", image: "bank_mandiri", type: .other),
+        Vendor(name: "Parking Area", image: "parking_area", type: .parkingLot),
+        Vendor(name: "My Republic Office", image: "my_republic", type: .other),
+        Vendor(name: "4 Life Office", image: "four_life", type: .other),
+        Vendor(name: "PT Sinergi Tridaya Medical", image: "sinergi_medical", type: .other),
+        Vendor(name: "John Robert Powers Office", image: "john_robert", type: .other),
+        Vendor(name: "PT Zinkpower Austrindo", image: "zinkpower", type: .other),
+        Vendor(name: "PT Omnia Paratus Teknologi", image: "omnia_teknologi", type: .other),
+        Vendor(name: "Fire Fighting System Aura Bumi Indonesia", image: "aura_bumi", type: .other),
+        Vendor(name: "Indonesia Harvest Chemical", image: "harvest_chemical", type: .other),
+        Vendor(name: "PT Digita Scientia Indonesia", image: "digita_scientia", type: .other),
+        Vendor(name: "PT Bintang Timur Karisma Harapan", image: "bintang_timur", type: .other),
+        Vendor(name: "Bumi Parama Wisesa", image: "bumi_wisesa", type: .other),
+        Vendor(name: "PT BD Agriculture Indonesia", image: "bd_agriculture", type: .other),
+        Vendor(name: "PT Hudoro Solusi Digital", image: "hudoro_digital", type: .other),
+        Vendor(name: "PT Weir Minerals Indonesia", image: "weir_minerals", type: .other),
+        Vendor(name: "DAF Property", image: "daf_property", type: .other)
+    ]
+    
+    // Create GOP 6 Building
+    let gop6Building = Building(
+        name: "Green Office Park 6",
+        image: "gop_6",
+        latitude: -6.30277,
+        longitude: 106.65346,
+        vendors: gop6Vendors,
+        rating: 4.7
+    )
+    
+    // Create Sinarmas Land Plaza vendors
+    let sinarmasVendors: [Vendor] = [
+        Vendor(name: "Restroom", image: "restroom", type: .other),
+        Vendor(name: "Outdoor Park", image: "outdoor_park", type: .lifestyle),
+        Vendor(name: "Parking Area", image: "parking_area", type: .parkingLot),
+        Vendor(name: "Prasetyamulya University", image: "prasmul", type: .other),
+        Vendor(name: "Sinarmas World Academy", image: "sinarmas_academy", type: .other)
+    ]
+    
+    // Create Sinarmas Land Plaza Building
+    let sinarmasBuilding = Building(
+        name: "Sinarmas Land Plaza",
+        image: "sinarmas_land",
+        latitude: -6.300326,
+        longitude: 106.662839,
+        vendors: sinarmasVendors,
+        rating: 4.9
+    )
+    
+    // Create Marketing Office Building
+    let marketingOfficeBuilding = Building(
+        name: "Marketing Office",
+        image: "marketing_office",
+        latitude: -6.300326,
+        longitude: 106.662839,
+        vendors: [],  // No vendors listed in the original data
+        rating: 4.6
+    )
+    
+    // Create Grha Unilever Building
+    let unileverBuilding = Building(
+        name: "Grha Unilever",
+        image: "unilever",
+        latitude: -6.300786,
+        longitude: 106.649875,
+        vendors: [],  // No vendors listed in the original data
+        rating: 4.9
+    )
+    
+    let terminal1Routes: [Route] = [
+        Route(name: "Route B200", dayName: "Senin - Jumat", image: "buswayScedhule"),
+        Route(name: "Route B201", dayName: "Senin - Jumat", image: "buswayScedhule"),
+        Route(name: "Route B202", dayName: "Senin - Jumat", image: "buswayScedhule"),
+        Route(name: "Route B203", dayName: "Senin - Jumat", image: "buswayScedhule"),
+        Route(name: "Route B204", dayName: "Senin - Jumat", image: "buswayScedhule")
+    ]
+    
+    let terminal1Vendor = Vendor(
+        name: "GOP Busway Terminal 1",
+        image: "bus_station",
+        type: .busway,
+        routeList: terminal1Routes
+    )
+    
+    // Create Busway Terminal 1 Building
+    let terminal1Building = Building(
+        name: "GOP Busway Terminal 1",
+        image: "bus_station",
+        latitude: -6.299200,
+        longitude: 106.651800,
+        vendors: [terminal1Vendor],
+        rating: 4.5
+    )
+    
+    // Similarly create other busway terminals
+    let terminal2Routes: [Route] = [
+        Route(name: "Route B205", dayName: "Senin - Jumat", image: "buswayScedhule"),
+        Route(name: "Route B206", dayName: "Senin - Jumat", image: "buswayScedhule"),
+        Route(name: "Route B207", dayName: "Senin - Jumat", image: "buswayScedhule"),
+        Route(name: "Route B208", dayName: "Senin - Jumat", image: "buswayScedhule"),
+        Route(name: "Route B209", dayName: "Senin - Jumat", image: "buswayScedhule")
+    ]
+    
+    let terminal2Vendor = Vendor(
+        name: "GOP Busway Terminal 2",
+        image: "bus_station",
+        type: .busway,
+        routeList: terminal2Routes
+    )
+    
+    let terminal2Building = Building(
+        name: "GOP Busway Terminal 2",
+        image: "bus_station",
+        latitude: -6.300100,
+        longitude: 106.653300,
+        vendors: [terminal2Vendor],
+        rating: 4.4
+    )
+    
+    // The Breeze mall has many vendors, let's add some of the main ones
+    let breezeVendors: [Vendor] = [
+        Vendor(name: "ATM Center", image: "atm_center", type: .other),
+        Vendor(name: "Basket Arena", image: "basket", type: .entertainment),
+        Vendor(name: "Bicycle Track", image: "bicycle", type: .lifestyle),
+        Vendor(name: "Koi Pond", image: "koi_pond", type: .lifestyle),
+        Vendor(name: "Nursery Room", image: "nursery", type: .other),
+        Vendor(name: "Prayer Room", image: "prayer_room", type: .worship),
+        Vendor(name: "Restroom", image: "restroom", type: .other),
+        Vendor(name: "Cinema", image: "cinema", type: .entertainment),
+        Vendor(name: "Ranch Market", image: "ranch_market", type: .lifestyle),
+        Vendor(name: "Gold's Gym", image: "golds_gym", type: .lifestyle),
+        Vendor(name: "Spincity Bowling Alley", image: "spincity_bowling", type: .entertainment),
+        Vendor(name: "Starbucks", image: "sbucks", type: .food),
+        Vendor(name: "Chatime", image: "chatime", type: .food),
+        Vendor(name: "J.Co", image: "jco", type: .food),
+        Vendor(name: "Subway", image: "subway", type: .food),
+        Vendor(name: "D'Cost", image: "dcost", type: .food),
+        Vendor(name: "Sushi Tei", image: "sutei", type: .food),
+        Vendor(name: "Guardian", image: "guardian", type: .lifestyle)
+    ]
+    
+    // Create The Breeze Building
+    let breezeBuilding = Building(
+        name: "The Breeze",
+        image: "the_breeze",
+        latitude: -6.30106,
+        longitude: 106.65338,
+        vendors: breezeVendors,
+        rating: 4.9
+    )
+    
+    // Create an array of all buildings
+    let allBuildings: [Building] = [
+        gop1Building,
+        gop5Building,
+        gop6Building,
+        gop9Building,
+        sinarmasBuilding,
+        marketingOfficeBuilding,
+        unileverBuilding,
+        terminal1Building,
+        terminal2Building,
+        breezeBuilding
+    ]
+    
     
     for index in 0..<count {
         // Generate vendors for each of the 7 types
@@ -190,7 +452,7 @@ func generateBuilding(name: String = "Green Office Park", latitude: Double = -6.
         
         buildings.append(building)
     }
-    buildings.append(realBuilding)
+    buildings += allBuildings
     return buildings
 }
 

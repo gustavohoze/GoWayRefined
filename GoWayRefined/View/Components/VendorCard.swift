@@ -11,8 +11,8 @@ struct VendorCard: View {
             // Vendor logo (image)
             Image(viewModel.vendorImage)
                 .resizable()
-                .scaledToFill()
                 .frame(maxWidth: 75, maxHeight: 75)
+                .scaledToFit()
                 .padding(.horizontal, 10)
             
             VStack(alignment: .leading, spacing: 3) {
@@ -79,7 +79,7 @@ struct VendorCard_Preview: PreviewProvider {
             .padding()
         
         // Preview without items (optional list)
-        VendorCard(vendorName: "BreadLife", vendorType: "ROTI, KUE", buildingName: "Green Office Park 2", vendorImage: "busway",rating: 5.0,  items: nil)
+        VendorCard(vendorName: "BreadLife", vendorType: "ROTI, KUE", buildingName: "Green Office Park 2", vendorImage: "gop_9",rating: 5.0,  items: nil)
             .previewLayout(.sizeThatFits)
             .padding()
     }

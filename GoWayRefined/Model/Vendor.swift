@@ -1,7 +1,29 @@
 import Foundation
+import AppIntents
 
-enum VendorType {
+// Make VendorType compatible with AppIntents
+enum VendorType: String, Hashable, CaseIterable, AppEnum {
     case food, entertainment, busway, parkingLot, lifestyle, worship, other
+    
+    // Required by AppEnum
+    static var typeDisplayRepresentation: TypeDisplayRepresentation {
+        TypeDisplayRepresentation(name: "Vendor Type")
+    }
+    
+    // Required by CaseDisplayRepresentable
+    static var caseDisplayRepresentations: [VendorType : DisplayRepresentation] {
+        [
+            .food: DisplayRepresentation(title: "Food", image: .init(systemName: "fork.knife")),
+            .entertainment: DisplayRepresentation(title: "Entertainment", image: .init(systemName: "film")),
+            .busway: DisplayRepresentation(title: "Busway", image: .init(systemName: "bus")),
+            .parkingLot: DisplayRepresentation(title: "Parking Lot", image: .init(systemName: "car")),
+            .lifestyle: DisplayRepresentation(title: "Lifestyle", image: .init(systemName: "bag")),
+            .worship: DisplayRepresentation(title: "Worship", image: .init(systemName: "hands.sparkles")),
+            .other: DisplayRepresentation(title: "Other", image: .init(systemName: "ellipsis.circle"))
+        ]
+    }
+    
+    // Your existing description method
     func description() -> String {
         switch self {
         case .food: return "Food"
@@ -34,5 +56,34 @@ struct Vendor : Equatable, Identifiable, Hashable{
     func hash(into hasher: inout Hasher) {
         hasher.combine(name)
         hasher.combine(type)
+    }
+}
+
+extension Vendor: AppEntity {
+    public static var typeDisplayRepresentation: TypeDisplayRepresentation {
+        TypeDisplayRepresentation(name: "Vendor")
+    }
+    
+    public var displayRepresentation: DisplayRepresentation {
+        DisplayRepresentation(
+            title: "\(name)",
+            subtitle: LocalizedStringResource(stringLiteral: type.description()),
+            image: .init(named: image)
+        )
+    }
+    
+    public static var defaultQuery = VendorQuery()
+}
+
+struct VendorQuery: EntityQuery {
+    func entities(for identifiers: [UUID]) async throws -> [Vendor] {
+        return identifiers.compactMap { id in
+            return BuildingDataModel.shared.getAllBuildings().flatMap { $0.vendors }.first { $0.id == id }
+        }
+    }
+    
+    func suggestedEntities() async throws -> [Vendor] {
+        // Return popular vendors (first 5 from all buildings)
+        return Array(BuildingDataModel.shared.getAllBuildings().flatMap { $0.vendors }.prefix(5))
     }
 }

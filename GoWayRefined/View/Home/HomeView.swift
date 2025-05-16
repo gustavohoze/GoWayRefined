@@ -2,19 +2,28 @@ import SwiftUI
 import CoreLocation
 
 struct HomeView: View {
-    @StateObject private var locationManager = LocationManager.shared
-    @StateObject private var navigationVM = NavigationViewModel()
+    // Reference to the shared NavigationViewModel
+    @ObservedObject var navigationViewModel: NavigationViewModel
+    
+    // HomeViewModel initialized with the shared NavigationViewModel
+    @StateObject private var viewModel: HomeViewModel
+    
+    // Initialize with the shared NavigationViewModel
+    init(navigationViewModel: NavigationViewModel) {
+        self.navigationViewModel = navigationViewModel
+        self._viewModel = StateObject(wrappedValue: HomeViewModel(navigationViewModel: navigationViewModel))
+    }
     
     var body: some View {
-        NavigationStack(path: $navigationVM.navPath) {
+        NavigationStack(path: $navigationViewModel.navPath) {
             ZStack {
                 Color.white.ignoresSafeArea()
                 
                 VStack(alignment: .leading) {
                     ScrollView {
-                        HomeHeader(navigationVM: navigationVM)
-                        HomeGrid(navigationVM: navigationVM)
-                        HomeRecommendation(navigationVM: navigationVM)
+                        HomeHeader(navigationVM: navigationViewModel)
+                        HomeGrid(navigationVM: navigationViewModel)
+                        HomeRecommendation(navigationVM: navigationViewModel)
                         HomeRating()
                         Spacer()
                     }
@@ -23,7 +32,6 @@ struct HomeView: View {
             }
             .navigationDestination(for: AppDestination.self) { destination in
                 switch destination {
-                
                 case .search:
                     SearchView()
                 case .busway:
@@ -60,30 +68,12 @@ struct HomeView: View {
                     StepNavigationView(steps: steps, vendor: vendor)
                 case .buildingDetail(let building):
                     BuildingDetailView(building: building)
-
                 }
             }
         }
-        .environmentObject(navigationVM)
         .onAppear {
-            requestLocationPermission()
-        }
-    }
-    
-    // Function to explicitly request location permission
-    private func requestLocationPermission() {
-        // Check current status first
-        let status = locationManager.authorizationStatus
-        
-        if status == .notDetermined {
-            // This will trigger the permission popup
-            locationManager.requestWhenInUseAuthorization()
+            viewModel.requestLocationPermission()
         }
     }
 }
 
-struct HomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        HomeView()
-    }
-}

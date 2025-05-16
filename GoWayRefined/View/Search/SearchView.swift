@@ -149,7 +149,7 @@ struct ResultsSection<Content: View>: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        LazyVStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text(title)
                     .font(.headline)

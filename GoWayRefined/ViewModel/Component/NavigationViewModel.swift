@@ -54,3 +54,7 @@ class NavigationViewModel: ObservableObject {
         }
     }
 }
+
+extension NavigationViewModel: @unchecked Sendable {
+    static var shared: NavigationViewModel?
+}

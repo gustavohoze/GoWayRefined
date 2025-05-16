@@ -12,8 +12,8 @@ struct RecommendationCard: View {
                 // Vendor logo (image) - matching RatingCard style
                 Image(vendorImage)
                     .resizable()
-                    .scaledToFill()
                     .frame(width: 50, height: 50)
+                    .scaledToFit()
                     .padding(.leading, 10)
                 
                 VStack(alignment: .leading, spacing: 3) {
