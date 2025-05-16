@@ -60,17 +60,30 @@ class AppNavigationManager: ObservableObject {
     
     // Check for pending navigation requests
     // In checkPendingVendorTypeNavigation method
-    private func checkPendingVendorTypeNavigation() {
+    // In AppNavigationManager
+     func checkPendingVendorTypeNavigation() {
         if let typeString = UserDefaults.standard.string(forKey: "pendingVendorTypeNavigation"),
            let type = VendorType(rawValue: typeString) {
             
             // Clear from UserDefaults immediately
             UserDefaults.standard.removeObject(forKey: "pendingVendorTypeNavigation")
             
-            print("DEBUG: Found vendor type in UserDefaults: \(typeString), raw value: \(type.rawValue)")
+            // Only navigate if this was a deliberate user action (not a default state)
+            // We need a way to determine if this was explicitly requested
+            let explicitlyRequested = UserDefaults.standard.bool(forKey: "explicitVendorTypeNavigation")
             
-            // Temporarily disable automatic navigation
-            // navigateToVendorType(type)
+            // If type is .other and not explicitly requested, skip it
+            if type == .other && !explicitlyRequested {
+                print("Skipping automatic navigation to Other type - not explicitly requested")
+            } else {
+                print("Processing navigation to vendor type: \(type.description())")
+                // Re-enable navigation
+                navigateToVendorType(type)
+            }
+            
+            // Clear the explicit flag
+            UserDefaults.standard.removeObject(forKey: "explicitVendorTypeNavigation")
+            clearNavigationState()
         }
     }
     
