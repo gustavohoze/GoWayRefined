@@ -1,17 +1,13 @@
-//
-//  SplashScreenView.swift
-//  GoWayRefined
-//
-//  Created by Gustavo Hoze Ercolesea on 16/05/25.
-//
-
-
 import SwiftUI
 
 struct SplashScreenView: View {
     @ObservedObject var navigationViewModel: NavigationViewModel
     @State private var isActive = false
-    private let splashDuration: Double = 1.0 // Splash screen duration in seconds
+    @State private var logoScale: CGFloat = 0.8
+    @State private var logoOpacity: Double = 0
+    @State private var textOpacity: Double = 0
+    private let splashDuration: Double = 1.5 // Slightly longer for animations
+    var onComplete: () -> Void
     
     var body: some View {
         ZStack {
@@ -22,59 +18,54 @@ struct SplashScreenView: View {
             VStack(spacing: 20) {
                 Spacer()
                 
-                // App logo/icon
-                Image(.gowayIcon) // Replace with your app logo
+                // App logo/icon with animations
+                Image(.gowayIcon)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 120, height: 120)
-                    .foregroundColor(.white)
+                    .scaleEffect(logoScale)
+                    .opacity(logoOpacity)
                 
-                // App name
+                // App name with fade in
                 Text("GoWay")
                     .font(.system(size: 32, weight: .bold))
                     .foregroundColor(.black)
+                    .opacity(textOpacity)
                 
                 Spacer()
                 
-                // Activity indicator
+                // Subtle loading indicator that fades in
 
             }
             .padding()
         }
         .onAppear {
-            // Automatically dismiss after the specified duration
+            // Animate logo appearance
+            withAnimation(.easeOut(duration: 0.6)) {
+                logoScale = 1.0
+                logoOpacity = 1.0
+            }
+            
+            // Slightly delayed text fade-in
+            withAnimation(.easeOut(duration: 0.6).delay(0.3)) {
+                textOpacity = 1.0
+            }
+            
+            // Prepare exit animation
             DispatchQueue.main.asyncAfter(deadline: .now() + splashDuration) {
-                withAnimation {
+                // First fade out
+                withAnimation(.easeIn(duration: 0.4)) {
+                    logoOpacity = 0.0
+                    textOpacity = 0.0
+                }
+                
+                // Then transition to home view
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     self.isActive = true
                     navigationViewModel.goToRoot()
+                    onComplete()
                 }
             }
         }
-    }
-    
-    // Function to navigate to home screen
-
-}
-
-// Extension for UserDefaults to handle splash screen state
-extension UserDefaults {
-    private enum Keys {
-        static let hasSeenSplashScreen = "hasSeenSplashScreen"
-    }
-    
-    var hasSeenSplashScreen: Bool {
-        get {
-            return bool(forKey: Keys.hasSeenSplashScreen)
-        }
-        set {
-            set(newValue, forKey: Keys.hasSeenSplashScreen)
-        }
-    }
-}
-
-// Preview
-struct SplashScreenView_Previews: PreviewProvider {
-    static var previews: some View {
-        SplashScreenView(navigationViewModel: NavigationViewModel())
     }
 }
