@@ -59,6 +59,7 @@ struct BuildingCard: View {
                         HStack {
                             ForEach(items, id: \.self) { item in
                                 Text(item.name)
+                                    .multilineTextAlignment(.leading)
                                     .frame(height: 20)
                                     .padding(5)
                                     .background(Color.gray.opacity(0.2))

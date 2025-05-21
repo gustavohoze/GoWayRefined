@@ -42,17 +42,17 @@ class SiriShortcuts: AppShortcutsProvider {
             systemImageName: "building.2"
         )
 
-        AppShortcut(
-            intent: SiriFindBuildingIntent(),
-            phrases: [
-                "Where is [building] in \(.applicationName)",
-                "Find [building] using \(.applicationName)",
-                "I need directions to [building] in \(.applicationName)",
-                "Take me to [building] in \(.applicationName)",
-            ],
-            shortTitle: "Voice Building Search",
-            systemImageName: "building.2.fill"
-        )
+//        AppShortcut(
+//            intent: SiriFindBuildingIntent(),
+//            phrases: [
+//                "Where is [building] in \(.applicationName)",
+//                "Find [building] using \(.applicationName)",
+//                "I need directions to [building] in \(.applicationName)",
+//                "Take me to [building] in \(.applicationName)",
+//            ],
+//            shortTitle: "Voice Building Search",
+//            systemImageName: "building.2.fill"
+//        )
         AppShortcut(
             intent: SiriFindVendorIntent(),
             phrases: [

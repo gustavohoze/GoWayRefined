@@ -186,7 +186,7 @@ func generateBuilding(name: String = "Green Office Park", latitude: Double = -6.
         Vendor(name: "Canteen", image: "canteen_gop9", type: .food),
         Vendor(name: "Outdoor Park", image: "outdoor_park", type: .lifestyle),
         Vendor(name: "Alfamart", image: "alfamart", type: .lifestyle),
-        Vendor(name: "Apple Developer Academy", image: "appdev", type: .other),
+        Vendor(name: "Apple Developer Academy", image: "appdev", type: .other, stepList: getRandomItems(from: stepData)),
         Vendor(name: "Commsult Indonesia", image: "commsult", type: .other),
         Vendor(name: "Purwadhika Digital Technology School", image: "purwadhika", type: .other),
         Vendor(name: "Monash University", image: "monash", type: .other),
